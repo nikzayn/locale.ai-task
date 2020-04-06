@@ -1,0 +1,22 @@
+version: "3"
+services:
+  frontend:
+    container_name: frontend_hdfc
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: nikzayn/frontend_hdfc
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/usr/src/app
+  backend:
+    container_name: backend_hdfc
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: nikzayn/backend_hdfc
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server:/usr/src/app
