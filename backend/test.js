@@ -21,7 +21,7 @@ function test() {
         let query = {
             text: `INSERT INTO ride_info (id, name, age) VALUES)`,
             values: [`${(arr[i].id)}, ${(arr[i].name)}, ${(arr[i].age)}`]
-        };
+        }
         console.log(query);
     }
 }
