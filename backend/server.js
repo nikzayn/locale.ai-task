@@ -46,7 +46,7 @@ function creatTable() {
     for (var i = 0; i < migration.length; i++) {
         console.log('Running migrations', i)
         dbConn.query(migration[i], (err, res) => {
-            // console.log(err, res)
+            console.log(err)
         });
     }
 }
@@ -146,6 +146,7 @@ app.get('/sectors', (req, res) => {
 app.post('/rides', (req, res) => {
     getRides(req.body, res);
 });
+
 
 
 //Server started

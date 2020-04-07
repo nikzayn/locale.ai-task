@@ -17,7 +17,8 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./backend:/app
+      - ./backend/src:/app/src
+      - ./backend/server.js:/app/server.js
     env_file:
       - ./.env
   db:

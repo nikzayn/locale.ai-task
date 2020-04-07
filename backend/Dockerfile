@@ -11,7 +11,7 @@ RUN npm install --silent
 
 EXPOSE 8080
 
-COPY server.js /app/
+COPY server.js /app/server.js
 COPY src /app/src
 
 CMD [ "nodemon", "server.js" ]

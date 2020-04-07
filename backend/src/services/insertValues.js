@@ -76,7 +76,7 @@ function insertValues(arr, dbConn) {
             if (err) {
                 console.log(query.values.slice(0, 19), i, lastNum, query.values.length, err.stack)
             } else {
-                console.log(i, arr.length, res)
+                console.log(i, arr.length)
             }
         })
     }

@@ -3,6 +3,7 @@ import axios from 'axios';
 import _ from 'lodash';
 
 import Map from './Map';
+import Visualization from '../Visualization/Visualization';
 
 
 class Display extends Component {
@@ -12,6 +13,7 @@ class Display extends Component {
             sectors: [],
             sector: '',
             getCordinates: '',
+            rideDetails: ''
         }
     }
 
@@ -33,7 +35,16 @@ class Display extends Component {
             .then(response => {
                 const result = response.data;
                 const data = {
-                    getCordinates: result
+                    getCordinates: result,
+                    rideDetails: _.map(result, (data) =>
+                        Object.assign({},
+                            {
+                                online_booking: data.online_booking,
+                                mobile_site_booking: data.mobile_site_booking,
+                                booking_created: data.booking_created,
+                                car_cancellation: data.car_cancellation
+                            })
+                    )
                 }
                 this.setState(data)
             })
@@ -56,6 +67,7 @@ class Display extends Component {
 
     }
 
+
     componentDidMount() {
         this.getSectors();
     }
@@ -76,12 +88,14 @@ class Display extends Component {
                         ))}
                     </select>
                 </div>
-                <div className="col-md-12">
+                <div>
                     <br />
                     <br />
                     <br />
-                    {this.state.sector && <Map coordinates={this.state.getCordinates} />}
-                    <br />
+                    <div>
+                        {this.state.sector && <Map coordinates={this.state.getCordinates} />}
+                        {this.state.sector && <Visualization details={this.state.rideDetails} />}
+                    </div>
                 </div>
             </div >
         );

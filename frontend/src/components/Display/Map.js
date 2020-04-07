@@ -155,13 +155,12 @@ export default class Map extends Component {
     };
     render() {
         return (
-            <div className='examples'>
-                <div className='parent'>
-                    <ReactEcharts
-                        option={this.getOption()}
-                        style={{ height: '600px', width: '100%' }}
-                        className='react_for_echarts' />
-                </div>
+            <div className="col-md-4">
+                <ReactEcharts
+                    option={this.getOption()}
+                    style={{ height: '450px', width: '100%' }}
+                    className='react_for_echarts'
+                />
             </div>
         );
     }
