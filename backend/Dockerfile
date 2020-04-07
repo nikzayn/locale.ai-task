@@ -1,9 +1,17 @@
 FROM node:lts-slim
 
-RUN mkdir -p /usr/src/app
+RUN mkdir -p /app
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-EXPOSE 8081
+ENV PATH /app/node_modules/.bin:$PATH
 
-CMD [ "nodemon", "run", "dev" ]
+COPY package.json /app/package.json
+RUN npm install --silent
+
+EXPOSE 8080
+
+COPY server.js /app/
+COPY src /app/src
+
+CMD [ "nodemon", "server.js" ]
