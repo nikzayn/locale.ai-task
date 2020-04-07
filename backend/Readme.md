@@ -1,9 +1,9 @@
 # Backend Task
-- Task is to create this API and save the data into PostgreSQL.
+- The task is to create API endpoints, which follows to (save & extract) the data (into & from) PostgreSQL.
 
 ## Let's subdivide the problem:
 - Features
-- Assumptions
+- Issues
 - Technologies
 
 ### Features
