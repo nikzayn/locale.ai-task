@@ -12,13 +12,8 @@
 - Visualization map for latitude and longitude points from csv columns.
 - Additional visualization details are like ```area, city, online_bookig, mobile_site_booking, car_cancellation etc ```.
 
-### Assumptions
-- Data filtering on the map
-- On demand data fetched from server when needed accordingly.
-
 ### Technologies
 - ReactJS
-- NodeJS
 - Lodash
 - E-charts
 
