@@ -12,8 +12,9 @@ class Display extends Component {
         this.state = {
             sectors: [],
             sector: '',
-            getCordinates: '',
-            rideDetails: ''
+            getCordinates: [],
+            travel_type: [],
+            cancellation_data: [],
         }
     }
 
@@ -35,16 +36,9 @@ class Display extends Component {
             .then(response => {
                 const result = response.data;
                 const data = {
-                    getCordinates: result,
-                    rideDetails: _.map(result, (data) =>
-                        Object.assign({},
-                            {
-                                online_booking: data.online_booking,
-                                mobile_site_booking: data.mobile_site_booking,
-                                booking_created: data.booking_created,
-                                car_cancellation: data.car_cancellation
-                            })
-                    )
+                    getCordinates: result.rides,
+                    travel_type: result.travel_type,
+                    cancellation_data: result.cancellation_data,
                 }
                 this.setState(data)
             })
@@ -93,8 +87,11 @@ class Display extends Component {
                     <br />
                     <br />
                     <div>
-                        {this.state.sector && <Map coordinates={this.state.getCordinates} />}
-                        {this.state.sector && <Visualization details={this.state.rideDetails} />}
+                        {this.state.sector && <Map coordinates={this.state.getCordinates} sector={this.state.sector} />}
+                        {this.state.sector && <Visualization
+                            travel_type={this.state.travel_type}
+                            cancellation_data={this.state.cancellation_data}
+                        />}
                     </div>
                 </div>
             </div >
