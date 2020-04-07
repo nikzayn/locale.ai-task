@@ -5,7 +5,7 @@ const multer = require('multer');
 const cors = require('cors');
 const csv = require('csv-parser')
 const dotenv = require('dotenv');
-const { Pool, Client } = require('pg')
+const { Pool } = require('pg')
 
 //API setup
 const upload = multer({ dest: 'uploads' });
@@ -15,6 +15,7 @@ const app = express();
 const migration = require('./db/migration');
 const dummyData = require('./dummyData');
 const sectorWise = require('./sectorWise');
+const insertValues = require('./test');
 
 //Port
 const port = 8080;
@@ -36,9 +37,9 @@ function sqlConnection() {
 
 function creatTable() {
     for (var i = 0; i < migration.length; i++) {
-        // console.log('Running migrations', i)
+        console.log('Running migrations', i)
         dbConn.query(migration[i], (err, res) => {
-            // console.log(err, res)
+            console.log(err, res)
         });
     }
 }
@@ -72,7 +73,6 @@ app.get('/parse', (req, res) => {
 
 //Csv Upload Endpoint
 app.post('/upload', upload.single('file'), function (req, res, next) {
-
     res.send("Csv uploaded");
     const results = [];
 
@@ -80,65 +80,72 @@ app.post('/upload', upload.single('file'), function (req, res, next) {
         .pipe(csv())
         .on('data', (data) => results.push(data))
         .on('end', () => {
-            insertValues(results);
+            insertValues(results, dbConn);
         });
 });
-
-function insertValues(results) {
-    let count = 0;
-    while (count < results.length) {
-        let query = {
-            name: 'rideInfo',
-            text: 'INSERT INTO ride_info (id, user_id, vehicle_model_id, package_id, travel_type_id, to_area_id, from_city_id, to_city_id, from_date, to_date, online_booking, mobile_site_booking, booking_created, from_lat, from_long, to_lat, to_long, Car_Cancellation) VALUES ',
-            values: []
-        }
-        const inital = count;
-        //Check if initial count is less than 5000 and also less than the results length
-        for (let j = inital; j < inital + 5000 && j < results.length; j++) {
-            query.text += (`\$${j}`);
-            query.values.push(`
-            ${results[j].id}, 
-            ${results[j].user_id}, 
-            ${results[j].vehicle_model_id},
-            ${results[j].package_id},
-            ${results[j].travel_type_id},
-            ${results[j].from_area_id},
-            ${results[j].to_area_id},
-            ${results[j].from_city_id},
-            ${results[j].to_city_id},
-            ${results[j].from_date},
-            ${results[j].to_date},
-            ${results[j].online_booking},
-            ${results[j].mobile_site_booking},
-            ${results[j].booking_created},
-            ${results[j].from_lat},
-            ${results[j].from_long},
-            ${results[j].to_lat},
-            ${results[j].to_long},
-            ${results[j].Car_Cancellation}`);
-            count++;
-        }
-
-
-        console.log(query);
-        // dbConn.query(query, (err, res) => {
-        //     if (err) {
-        //         console.log(err.stack)
-        //     } else {
-        //         console.log(res.rows[0])
-        //     }
-        // })
-    }
-}
-
-
 
 
 
 //Seclected Sectors results
-app.post('/selectedSectors', (req, res, next) => {
+app.get('/selectedSectors', (req, res) => {
     //will get the datat from postgres
-    res.send(sectorWise);
+    let coordsResults;
+    dbConn.query(`SELECT MIN(from_lat) as min_from_lat, 
+                         MAX(from_lat) as max_from_lat, 
+                         MIN(to_lat) as min_to_lat, 
+                         MAX(to_lat) as max_to_lat, 
+                         MIN(from_long) as min_from_long,
+                         MAX(from_long) as max_from_long,
+                         MIN(to_long) as min_to_long,
+                         MAX(to_long) as max_to_long 
+                        FROM ride_info`, (err, result) => {
+        if (err) {
+            console.log(err.stack)
+        } else {
+            console.log(result);
+        }
+
+        const xMin = result.rows[0].min_from_lat < result.rows[0].min_to_lat ?
+            result.rows[0].min_from_lat :
+            result.rows[0].min_to_lat;
+
+        const xMax = result.rows[0].max_from_lat > result.rows[0].max_to_lat ?
+            result.rows[0].max_from_lat :
+            result.rows[0].max_to_lat;
+
+        const yMin = result.rows[0].min_from_long < result.rows[0].min_to_long ?
+            result.rows[0].min_from_long :
+            result.rows[0].min_to_long;
+
+        const yMax = result.rows[0].max_from_long > result.rows[0].max_to_long ?
+            result.rows[0].max_from_long :
+            result.rows[0].max_to_long;
+
+
+        const divisions = 3;
+        const lat = (xMax - xMin) / divisions;
+        const long = (yMax - yMin) / divisions;
+        const sectors = {};
+        let count = 0;
+        for (let i = 0; i < divisions; i++) {
+            for (let j = 0; j < divisions; j++) {
+                sectors['sector ' + count] = {
+                    from_lat: xMin + (i *),
+                    from_long: "77.55332",
+                    to_lat: "12.97143",
+                    to_long: "77.63914"
+                }
+
+                count++;
+            }
+        }
+
+        //1. 
+    })
+
+    // for (let i = 0; i < coordsResults.length; i++) {
+    //     console.log(i);
+    // }
 });
 
 
