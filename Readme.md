@@ -28,8 +28,7 @@ First Install manually
 ```
 npm install
 ```
-in directory ```frontend```.
-
+in directory ```frontend```, then follow below option
 
 ### Usage
 ```
