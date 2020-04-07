@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import ReactEcharts from 'echarts-for-react';
 import _ from 'lodash';
 
-import './Map.css';
 import 'echarts/map/js/world.js';
 
 export default class Map extends Component {
+    myChart;
     getOption = () => {
         const geoCoordMap = _.chain(this.props.coordinates)
             .filter(coords => isFinite(coords.from_lat) && isFinite(coords.from_long) && isFinite(coords.to_lat) && isFinite(coords.to_long))
@@ -131,7 +131,8 @@ export default class Map extends Component {
             },
             geo: {
                 map: 'world',
-                zoom: 2,
+                zoom: 3,
+                scaleLimit: { min: 1, max: 5 },
                 label: {
                     emphasis: {
                         show: false
@@ -157,6 +158,18 @@ export default class Map extends Component {
         return (
             <div className="col-md-4">
                 <ReactEcharts
+                    ref={(e) => {
+                        if (!e) {
+                            return;
+                        }
+                        this.myChart = e.getEchartsInstance();
+                        // console.log(this.myChart.dispatchAction)
+                        this.myChart.dispatchAction({
+                            type: 'dataZoom',
+                            start: 20,
+                            end: 30
+                        });
+                    }}
                     option={this.getOption()}
                     style={{ height: '450px', width: '100%' }}
                     className='react_for_echarts'
