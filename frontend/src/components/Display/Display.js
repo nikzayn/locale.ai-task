@@ -15,6 +15,33 @@ class Display extends Component {
         }
     }
 
+    getSectors() {
+        axios.get('http://localhost:8080/sectors')
+            .then(response => {
+                const result = response.data;
+                const data = {
+                    getCordinates: result,
+                    sectors: _.map(result, (data, sectorName) => Object.assign({}, data, { name: sectorName, value: sectorName }))
+                }
+                this.setState(data)
+            })
+            .catch(err => console.log(err))
+    }
+
+    getCoordinates(selectedSector) {
+        axios.post('http://localhost:8080/rides', selectedSector)
+            .then(response => {
+                const result = response.data;
+                const data = {
+                    getCordinates: result
+                }
+                this.setState(data)
+            })
+            .catch(err => console.log(err))
+    }
+
+
+
     handleChange = (event) => {
         const sector = event.target.value;
         this.setState({
@@ -25,29 +52,12 @@ class Display extends Component {
         if (!selectedSector) {
             return;
         }
-
-        axios.post('http://localhost:8080/selectedSectors')
-            .then(response => {
-
-                this.setState({
-                    getCordinates: response.data
-                })
-            })
-            .catch(err => console.log(err))
-
+        this.getCoordinates(selectedSector);
 
     }
 
     componentDidMount() {
-        axios.get('http://localhost:8080/parse')
-            .then(response => {
-                const result = response.data.data;
-                this.setState({
-                    sectors: _.map(result, (data, sectorName) => Object.assign({}, data, { name: sectorName, value: sectorName }))
-                })
-            })
-            .catch(err => console.log(err))
-
+        this.getSectors();
     }
 
     render() {
@@ -70,7 +80,7 @@ class Display extends Component {
                     <br />
                     <br />
                     <br />
-                    {this.state.getCordinates && <Map coordinates={this.state.getCordinates} />}
+                    {this.state.sector && <Map coordinates={this.state.getCordinates} />}
                     <br />
                 </div>
             </div >

@@ -50,7 +50,7 @@ export default class Map extends Component {
         const series = [];
         [['Data', BJData]].forEach(function (item, i) {
             series.push({
-                name: item[0] + ' Top10',
+                name: item[0] + 'Rides',
                 type: 'lines',
                 zlevel: 1,
                 effect: {
@@ -70,7 +70,7 @@ export default class Map extends Component {
                 data: convertData(item[1])
             },
                 {
-                    name: item[0] + ' Top10',
+                    name: item[0] + 'Rides',
                     type: 'lines',
                     zlevel: 2,
                     symbol: ['none', 'arrow'],
@@ -93,7 +93,7 @@ export default class Map extends Component {
                     data: convertData(item[1])
                 },
                 {
-                    name: item[0] + ' Top10',
+                    name: item[0] + 'Rides',
                     type: 'effectScatter',
                     coordinateSystem: 'geo',
                     zlevel: 2,
@@ -131,12 +131,13 @@ export default class Map extends Component {
             },
             geo: {
                 map: 'world',
-                zoom: 4,
+                zoom: 2,
                 label: {
                     emphasis: {
                         show: false
                     }
                 },
+                dataZoomSelectActive: true,
                 roam: true,
                 itemStyle: {
                     normal: {

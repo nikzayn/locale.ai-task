@@ -1,22 +1,29 @@
 version: "3"
 services:
   frontend:
-    container_name: frontend_hdfc
+    container_name: frontend
     build:
-      context: ./client
+      context: ./frontend
       dockerfile: Dockerfile
-    image: nikzayn/frontend_hdfc
     ports:
       - "3000:3000"
     volumes:
-      - ./client:/usr/src/app
+      - ./frontend:/app/
   backend:
-    container_name: backend_hdfc
+    container_name: backend
     build:
-      context: ./server
+      context: ./backend
       dockerfile: Dockerfile
-    image: nikzayn/backend_hdfc
     ports:
       - "8080:8080"
     volumes:
-      - ./server:/usr/src/app
+      - ./backend:/app
+    env_file:
+      - ./.env
+  db:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./.env
