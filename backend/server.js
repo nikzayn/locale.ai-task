@@ -60,41 +60,79 @@ function dbSetup() {
 dbSetup();
 
 function getRides(sector, res) {
-    let query = {
+    const whereCondition = ` WHERE
+    (  from_lat >= $1 AND 
+       from_lat <= $2 AND 
+       from_long >= $3 AND 
+       from_long <= $4 AND 
+       from_lat IS NOT NULL AND
+    from_long IS NOT NULL AND
+    to_lat IS NOT NULL AND
+    to_long IS NOT NULL
+    )
+    OR
+    (   to_lat >= $1 AND 
+        to_lat <= $2 AND 
+        to_long >= $3 AND 
+        to_long <= $4 AND
+        from_lat IS NOT NULL AND
+    from_long IS NOT NULL AND
+    to_lat IS NOT NULL AND
+    to_long IS NOT NULL
+    )`
+    const query1 = {
         text: `SELECT * FROM ride_info 
-        WHERE
-            (  from_lat >= $1 AND 
-               from_lat <= $2 AND 
-               from_long >= $3 AND 
-               from_long <= $4 AND 
-               from_lat IS NOT NULL AND
-            from_long IS NOT NULL AND
-            to_lat IS NOT NULL AND
-            to_long IS NOT NULL
-            )
-            OR
-            (   to_lat >= $1 AND 
-                to_lat <= $2 AND 
-                to_long >= $3 AND 
-                to_long <= $4 AND
-                from_lat IS NOT NULL AND
-            from_long IS NOT NULL AND
-            to_lat IS NOT NULL AND
-            to_long IS NOT NULL
-            )
-        LIMIT 100`,
+        ${whereCondition}
+        LIMIT 100 `,
         values: [sector.from_lat, sector.to_lat, sector.from_long, sector.to_long]
     }
+    let query2 = {
+        text: `SELECT count(*), vehicle_model_id FROM ride_info ${whereCondition} group by vehicle_model_id`,
+        values: [sector.from_lat, sector.to_lat, sector.from_long, sector.to_long]
+    };
+    let query3 = {
+        text: `SELECT count(*), from_area_id, Car_Cancellation FROM ride_info ${whereCondition} group by from_area_id, Car_Cancellation`,
+        values: [sector.from_lat, sector.to_lat, sector.from_long, sector.to_long]
+    };
+    let obj = { rides: null, travel_type: null, cancellation_data: null };
 
-
-    dbConn.query(query, (err, result) => {
+    dbConn.query(query1, (err, result) => {
         if (err) {
             console.log(err.stack);
-            res.send([]);
+            sendResponse(res, obj, 'rides', [])
             return
         }
-        res.send(result.rows);
+        console.log(result)
+        sendResponse(res, obj, 'rides', result.rows);
     })
+
+    dbConn.query(query2, (err, result) => {
+        if (err) {
+            console.log(err.stack);
+            sendResponse(res, obj, 'travel_type', [])
+            return
+        }
+        sendResponse(res, obj, 'travel_type', result.rows);
+    })
+
+    dbConn.query(query3, (err, result) => {
+        if (err) {
+            console.log(err.stack);
+            sendResponse(res, obj, 'cancellation_data', [])
+            return
+        }
+        sendResponse(res, obj, 'cancellation_data', result.rows);
+    })
+}
+
+function sendResponse(res, obj, prop, value) {
+    obj[prop] = value;
+    for (let prop in obj) {
+        if (!obj[prop]) {
+            return;
+        }
+    }
+    res.send(obj);
 }
 
 
