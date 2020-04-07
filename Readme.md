@@ -5,6 +5,7 @@
 ## Overview
 - Design Thoughts
 - System Requirements
+- Usage Issue
 - Usage
 - Frontend Issues
 - Backend Issues
@@ -20,6 +21,14 @@
 ### System Requirements
 - Docker
 - Docker Compose
+
+
+## Usage Issue
+First Install manually 
+```
+npm install
+```
+in directory ```frontend```.
 
 
 ### Usage
