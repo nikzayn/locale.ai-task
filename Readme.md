@@ -5,7 +5,6 @@
 ## Overview
 - Design Thoughts
 - System Requirements
-- Usage Issue
 - Usage
 - Frontend Issues
 - Backend Issues
@@ -22,13 +21,6 @@
 - Docker
 - Docker Compose
 
-
-### Usage Issue
-First Install manually 
-```
-npm install
-```
-in directory ```frontend```, then follow below option
 
 ### Usage
 ```
